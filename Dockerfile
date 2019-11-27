@@ -61,7 +61,7 @@ ENV PACK_URL https://github.com/buildpack/pack/releases/download/v${PACK_VERSION
 RUN wget -O pack.tgz "${PACK_URL}"
 RUN tar -zxf pack.tgz
 
-FROM alpine:3.10 as runtimes
+FROM docker:19.03.3 as runtimes
 
 # Install tools
 RUN apk add --no-cache \
@@ -86,7 +86,6 @@ RUN apk add --no-cache --virtual .build-dependencies \
     && pip install --upgrade pip cffi ansible requests google-auth \
     && apk del .build-dependencies
 
-COPY --from=docker:18.09.6 /usr/local/bin/docker /usr/local/bin/
 COPY --from=download-skaffold skaffold /usr/local/bin/
 COPY --from=download-kubectl kubectl /usr/local/bin/
 COPY --from=download-helm helm /usr/local/bin/
