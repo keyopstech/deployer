@@ -19,6 +19,13 @@ ENV HELM_URL https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}
 RUN wget -O helm.tar.gz "${HELM_URL}"
 RUN tar -xvf helm.tar.gz --strip-components 1
 
+# Download sops
+FROM alpine:3.10 as download-sops
+ENV SOPS_VERSION v3.5.0
+ENV SOPS_URL https://github.com/mozilla/sops/releases/download/${SOPS_VERSION}/sops-${SOPS_VERSION}.linux
+RUN wget -O sops "${SOPS_URL}"
+RUN chmod +x sops
+
 # Download kustomize
 FROM alpine:3.10 as download-kustomize
 ENV KUSTOMIZE_VERSION 3.2.0
@@ -89,12 +96,16 @@ RUN apk add --no-cache --virtual .build-dependencies \
 COPY --from=download-skaffold skaffold /usr/local/bin/
 COPY --from=download-kubectl kubectl /usr/local/bin/
 COPY --from=download-helm helm /usr/local/bin/
+COPY --from=download-sops sops /usr/local/bin/
 COPY --from=download-kustomize kustomize /usr/local/bin/
 COPY --from=download-kompose kompose /usr/local/bin/
 COPY --from=download-container-structure-test container-structure-test /usr/local/bin/
 COPY --from=download-kind kind /usr/local/bin/
 COPY --from=download-gcloud google-cloud-sdk/ /google-cloud-sdk/
 COPY --from=download-pack pack /usr/local/bin/
+
+# Add helm secrets
+RUN helm init --client-only && helm plugin install https://github.com/futuresimple/helm-secrets 
 
 # Finish installation of gcloud
 RUN CLOUDSDK_PYTHON="python2.7" /google-cloud-sdk/install.sh \
