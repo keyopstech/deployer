@@ -82,7 +82,8 @@ RUN apk add --no-cache \
         openssh \
         bash \
         git \
-        unzip
+        unzip \
+        jq
 
 # Install Ansible
 RUN apk add --no-cache --virtual .build-dependencies \
@@ -90,7 +91,7 @@ RUN apk add --no-cache --virtual .build-dependencies \
         libffi-dev \
         openssl-dev \
         build-base \
-    && pip install --upgrade pip cffi ansible requests google-auth jq yq \
+    && pip install --upgrade pip cffi ansible requests google-auth yq \
     && apk del .build-dependencies
 
 COPY --from=download-skaffold skaffold /usr/local/bin/
