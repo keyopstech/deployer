@@ -1,6 +1,6 @@
 # Download skaffold
 FROM alpine:3.10 as download-skaffold
-ENV SKAFFOLD_VERSION 1.0.1
+ENV SKAFFOLD_VERSION 1.1.0
 ENV SKAFFOLD_URL https://storage.googleapis.com/skaffold/releases/v${SKAFFOLD_VERSION}/skaffold-linux-amd64
 RUN wget -O skaffold "${SKAFFOLD_URL}"
 RUN chmod +x skaffold
