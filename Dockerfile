@@ -70,7 +70,7 @@ RUN tar -zxf pack.tgz
 
 # Download terraform
 FROM alpine:3.10 as terraform
-ENV TERRAFORM_VERSION 0.13.5
+ENV TERRAFORM_VERSION 0.13.6
 ENV TERRAFORM_URL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 RUN wget -O terraform.tgz "${TERRAFORM_URL}"
 RUN unzip terraform.tgz
