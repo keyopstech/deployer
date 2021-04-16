@@ -14,7 +14,7 @@ RUN chmod +x kubectl
 
 # Download helm
 FROM alpine:3.10 as download-helm
-ENV HELM_VERSION v2.17.0
+ENV HELM_VERSION v2.13.0
 ENV HELM_URL https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz
 RUN wget -O helm.tar.gz "${HELM_URL}"
 RUN tar -xvf helm.tar.gz --strip-components 1
@@ -71,7 +71,7 @@ RUN tar -zxf pack.tgz
 # Download terraform
 FROM alpine:3.10 as terraform
 ENV TERRAFORM_VERSION 0.13.5
-ENV TERRAFORM_URL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_arm64.zip
+ENV TERRAFORM_URL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
 RUN wget -O terraform.tgz "${TERRAFORM_URL}"
 RUN unzip terraform.tgz
 
@@ -114,7 +114,7 @@ COPY --from=download-pack pack /usr/local/bin/
 COPY --from=terraform terraform /usr/local/bin/
 
 # Add helm secrets
-RUN helm init --client-only && helm plugin install https://github.com/futuresimple/helm-secrets 
+RUN helm init --stable-repo-url https://charts.helm.sh/stable --client-only && helm plugin install https://github.com/futuresimple/helm-secrets 
 
 # Finish installation of gcloud
 RUN CLOUDSDK_PYTHON="python2.7" /google-cloud-sdk/install.sh \
