@@ -14,8 +14,8 @@ RUN chmod +x kubectl
 
 # Download helm
 FROM alpine:3.10 as download-helm
-ENV HELM_VERSION v2.13.0
-ENV HELM_URL https://storage.googleapis.com/kubernetes-helm/helm-${HELM_VERSION}-linux-amd64.tar.gz
+ENV HELM_VERSION v3.5.4
+ENV HELM_URL https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz
 RUN wget -O helm.tar.gz "${HELM_URL}"
 RUN tar -xvf helm.tar.gz --strip-components 1
 
@@ -114,7 +114,7 @@ COPY --from=download-pack pack /usr/local/bin/
 COPY --from=terraform terraform /usr/local/bin/
 
 # Add helm secrets
-RUN helm init --stable-repo-url https://charts.helm.sh/stable --client-only && helm plugin install https://github.com/futuresimple/helm-secrets 
+RUN helm repo add stable https://charts.helm.sh/stable && helm plugin install https://github.com/futuresimple/helm-secrets 
 
 # Finish installation of gcloud
 RUN CLOUDSDK_PYTHON="python2.7" /google-cloud-sdk/install.sh \
